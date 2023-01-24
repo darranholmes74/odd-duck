@@ -3,7 +3,11 @@
 const productimgEl = document.getElementById('product-image');
 const products = ['bag.jpg', 'banana.jpg', 'bathroom.jpg', 'boots.jpg', 'breakfast.jpg', 'bubblegum.jpg', 'chair.jpg', 'cthulhu.jpg', 'dog-duck.jpg', 'dragon.jpg', 'pen.jpg', 'pet-sweep.jpg', 'scissors.jpg', 'shark.jpg', 'sweep.png', 'tauntaun.jpg', 'unicorn.jpg', 'water-can.jpg', 'wine-glass.jpg'];
 const allProductImg = [];
-
+let rounds = 8;
+let graph = null;
+const canvEl = document.getElementById('graph');
+const buttonEl = document.getElementById('reveal');
+let newImgArray = [];
 
 
 function ProductImg(name, url){
@@ -26,29 +30,16 @@ function render(){
     let img2 = randomProduct();
     let img3 = randomProduct();
 
-    while (img2 === img1){
+    while (img1 === img2){
         img2 = randomProduct();
     }
-
-    while (img3 === img1){
+    while(img1 === img3){
         img3 = randomProduct();
     }
-    while (img3 === img2) {
+    while (img2 === img3){
         img3 = randomProduct();
     }
 
-
-    if(prodimg1 === img1 || prodimg1 === img2 || prodimg1 === img3){
-        this.shown++
-    }
-
-    if(prodimg2 === img1 || prodimg2 === img2 || prodimg2 === img3){
-        this.shown++
-    }
-
-    if(prodimg3 === img1 || prodimg3 === img2 || prodimg3 === img3){
-        this.shown++
-    }
 
     let prod1 = allProductImg[img1];
     let prod2 = allProductImg[img2];
@@ -56,24 +47,40 @@ function render(){
     prodimg1.src = prod1.url;
     prodimg2.src = prod2.url;
     prodimg3.src = prod3.url;
-    prodimg1.name = prod1.url;
-    prodimg2.name = prod2.url;
-    prodimg3.name = prod3.url;
-    
+    prodimg1.name = prod1.name;
+    prodimg2.name = prod2.name;
+    prodimg3.name = prod3.name;
+    prod1.shown++;
+    prod2.shown++;
+    prod3.shown++;
 }
 
 
 
+// function reRender(){
+//     let oldImg = allProductImg[render()];
+//     if (oldImg === )
+// }
 
 
 function userClick(event){
+   
     let productName = event.target.name;
+    console.log(event.target);
 
     allProductImg.forEach(function (product){
+        // console.log("this is product.name", product.name);
+        // console.log("this is productName", productName);
         if (product.name === productName){
-            product.clicks++
+            product.clicks++;
+            console.log(allProductImg);
         }
     });
+    rounds--;
+    if (!rounds){
+        productimgEl.removeEventListener('click', userClick);
+        buttonEl.style.display = 'inline';
+    }
 
     render();
 }
@@ -83,9 +90,56 @@ for (let i = 0; i < products.length; i++){
     allProductImg.push(productimg);
 }
 
-render();
 
-productimgEl.addEventListener('click', userClick);
 
 console.log(allProductImg);
 
+function results(event){
+
+let nameArray = [];
+let clicksArray = [];
+let shownArray = [];
+
+for(let i = 0; i < allProductImg.length; i++){
+    nameArray.push(allProductImg[i].name);
+    clicksArray.push(allProductImg[i].clicks);
+    shownArray.push(allProductImg[i].shown);
+}
+
+
+
+new Chart(canvEl, {
+  type: 'bar',
+  data: {
+    labels: nameArray,
+    datasets: [{
+      label: '# of Votes',
+      data: clicksArray,
+      borderWidth: 1
+    }, {
+        label: '# of Views',
+        data: shownArray,
+        borderWidth: 1
+    }]
+  },
+  options: {
+    scales: {
+      y: {
+        beginAtZero: true
+      }
+    }
+  }
+});
+}
+
+render();
+
+productimgEl.addEventListener('click', userClick);
+buttonEl.addEventListener('click', results);
+
+//create img click through array
+//for loop through all img array
+//access the img clicks property
+//push to img clicked array
+
+//same for shown
