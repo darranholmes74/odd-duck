@@ -3,7 +3,7 @@
 const productimgEl = document.getElementById('product-image');
 const products = ['bag.jpg', 'banana.jpg', 'bathroom.jpg', 'boots.jpg', 'breakfast.jpg', 'bubblegum.jpg', 'chair.jpg', 'cthulhu.jpg', 'dog-duck.jpg', 'dragon.jpg', 'pen.jpg', 'pet-sweep.jpg', 'scissors.jpg', 'shark.jpg', 'sweep.png', 'tauntaun.jpg', 'unicorn.jpg', 'water-can.jpg', 'wine-glass.jpg'];
 const allProductImg = [];
-let rounds = 8;
+let rounds = 5;
 let graph = null;
 const canvEl = document.getElementById('graph');
 const buttonEl = document.getElementById('reveal');
@@ -30,16 +30,28 @@ function render(){
     let img2 = randomProduct();
     let img3 = randomProduct();
 
-    while (img1 === img2){
-        img2 = randomProduct();
-    }
-    while(img1 === img3){
-        img3 = randomProduct();
-    }
-    while (img2 === img3){
-        img3 = randomProduct();
+
+    while(newImgArray.includes(img1)){
+        img1 = randomProduct();
     }
 
+    while (img1 === img2 || newImgArray.includes(img2)){
+        img2 = randomProduct();
+    }
+    while(img1 === img3 || img2 === img3 || newImgArray.includes(img3)){
+        img3 = randomProduct();
+    }
+    // while (img2 === img3){
+    //     img3 = randomProduct();
+    // }
+
+    
+    if(newImgArray.length > 3){
+        newImgArray.shift();
+    }
+    newImgArray.push(img1);
+    newImgArray.push(img2);
+    newImgArray.push(img3);
 
     let prod1 = allProductImg[img1];
     let prod2 = allProductImg[img2];
@@ -53,13 +65,26 @@ function render(){
     prod1.shown++;
     prod2.shown++;
     prod3.shown++;
+
+    
 }
 
 
-
 // function reRender(){
-//     let oldImg = allProductImg[render()];
-//     if (oldImg === )
+//     let oldImg = render();
+//     console.log(oldImg);
+//     // oldImg.push(newImgArray)
+//     // console.log(oldImg);
+//     while (newImgArray === img1){
+//         img1 = randomProduct();
+//     }
+//     while (newImgArray === img2){
+//         img2 = randomProduct();
+//     }
+//     while (newImgArray === img3){
+//         img3 = randomProduct();
+//     }
+    
 // }
 
 
@@ -83,6 +108,7 @@ function userClick(event){
     }
 
     render();
+    // reRender();
 }
 
 for (let i = 0; i < products.length; i++){
@@ -133,6 +159,7 @@ new Chart(canvEl, {
 }
 
 render();
+
 
 productimgEl.addEventListener('click', userClick);
 buttonEl.addEventListener('click', results);
