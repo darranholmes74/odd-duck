@@ -1,15 +1,29 @@
 'use strict';
-
+// this is where the variables are defined
 const productimgEl = document.getElementById('product-image');
-const products = ['bag.jpg', 'banana.jpg', 'bathroom.jpg', 'boots.jpg', 'breakfast.jpg', 'bubblegum.jpg', 'chair.jpg', 'cthulhu.jpg', 'dog-duck.jpg', 'dragon.jpg', 'pen.jpg', 'pet-sweep.jpg', 'scissors.jpg', 'shark.jpg', 'sweep.png', 'tauntaun.jpg', 'unicorn.jpg', 'water-can.jpg', 'wine-glass.jpg'];
-const allProductImg = [];
+const products = ['bag.jpg', 'banana.jpg', 'bathroom.jpg', 'boots.jpg', 'breakfast.jpg', 'bubblegum.jpg',
+ 'chair.jpg', 'cthulhu.jpg', 'dog-duck.jpg', 'dragon.jpg', 'pen.jpg', 'pet-sweep.jpg', 'scissors.jpg', 'shark.jpg', 'sweep.png',
+  'tauntaun.jpg', 'unicorn.jpg', 'water-can.jpg', 'wine-glass.jpg'];
 let rounds = 5;
 let graph = null;
 const canvEl = document.getElementById('graph');
 const buttonEl = document.getElementById('reveal');
-let newImgArray = [];
 
+// this is the state function
+const localStorageProducts = getProducts();
+let state = null;
 
+if(localStorageProducts){
+    state = localStorageProducts;
+} else {
+state = {
+allProductImg: [],
+newImgArray: [],
+};
+
+}
+
+// contructor object
 function ProductImg(name, url){
     this.name = name;
     this.url = `images/${url}`;
@@ -17,10 +31,10 @@ function ProductImg(name, url){
     this.shown = 0;
 }
  function randomProduct()  {
-    return Math.floor(Math.random() * allProductImg.length);
+    return Math.floor(Math.random() * state.allProductImg.length);
 }
 
-
+// the render fuction with while loop and times shown counter
 function render(){
     let prodimg1 = document.getElementById('prodimg1')
     let prodimg2 = document.getElementById('prodimg2')
@@ -31,31 +45,28 @@ function render(){
     let img3 = randomProduct();
 
 
-    while(newImgArray.includes(img1)){
+    while(state.newImgArray.includes(img1)){
         img1 = randomProduct();
     }
 
-    while (img1 === img2 || newImgArray.includes(img2)){
+    while (img1 === img2 || state.newImgArray.includes(img2)){
         img2 = randomProduct();
     }
-    while(img1 === img3 || img2 === img3 || newImgArray.includes(img3)){
+    while(img1 === img3 || img2 === img3 || state.newImgArray.includes(img3)){
         img3 = randomProduct();
     }
-    // while (img2 === img3){
-    //     img3 = randomProduct();
-    // }
 
     
-    if(newImgArray.length > 3){
-        newImgArray.shift();
+    if(state.newImgArray.length > 3){
+        state.newImgArray.shift();
     }
-    newImgArray.push(img1);
-    newImgArray.push(img2);
-    newImgArray.push(img3);
+    state.newImgArray.push(img1);
+    state.newImgArray.push(img2);
+    state.newImgArray.push(img3);
 
-    let prod1 = allProductImg[img1];
-    let prod2 = allProductImg[img2];
-    let prod3 = allProductImg[img3];
+    let prod1 = state.allProductImg[img1];
+    let prod2 = state.allProductImg[img2];
+    let prod3 = state.allProductImg[img3];
     prodimg1.src = prod1.url;
     prodimg2.src = prod2.url;
     prodimg3.src = prod3.url;
@@ -66,39 +77,20 @@ function render(){
     prod2.shown++;
     prod3.shown++;
 
-    
+    saveProducts(state);
 }
 
-
-// function reRender(){
-//     let oldImg = render();
-//     console.log(oldImg);
-//     // oldImg.push(newImgArray)
-//     // console.log(oldImg);
-//     while (newImgArray === img1){
-//         img1 = randomProduct();
-//     }
-//     while (newImgArray === img2){
-//         img2 = randomProduct();
-//     }
-//     while (newImgArray === img3){
-//         img3 = randomProduct();
-//     }
-    
-// }
-
-
+// click function
 function userClick(event){
    
     let productName = event.target.name;
     console.log(event.target);
 
-    allProductImg.forEach(function (product){
-        // console.log("this is product.name", product.name);
-        // console.log("this is productName", productName);
+    state.allProductImg.forEach(function (product){
+  
         if (product.name === productName){
             product.clicks++;
-            console.log(allProductImg);
+            console.log(state.allProductImg);
         }
     });
     rounds--;
@@ -106,19 +98,18 @@ function userClick(event){
         productimgEl.removeEventListener('click', userClick);
         buttonEl.style.display = 'inline';
     }
-
+    saveProducts(state);
     render();
-    // reRender();
 }
 
 for (let i = 0; i < products.length; i++){
     let productimg = new ProductImg(products[i].slice(0, products[i].length -4), products[i]);
-    allProductImg.push(productimg);
+    state.allProductImg.push(productimg);
 }
 
 
 
-console.log(allProductImg);
+console.log(state.allProductImg);
 
 function results(event){
 
@@ -126,10 +117,12 @@ let nameArray = [];
 let clicksArray = [];
 let shownArray = [];
 
-for(let i = 0; i < allProductImg.length; i++){
-    nameArray.push(allProductImg[i].name);
-    clicksArray.push(allProductImg[i].clicks);
-    shownArray.push(allProductImg[i].shown);
+for(let i = 0; i < state.allProductImg.length; i++){
+    nameArray.push(state.allProductImg[i].name);
+    clicksArray.push(state.allProductImg[i].clicks);
+    shownArray.push(state.allProductImg[i].shown);
+
+    deleteProducts(state);
 }
 
 

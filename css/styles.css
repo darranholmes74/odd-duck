@@ -1,8 +1,49 @@
 img {
     min-width: 200px;
     width: 30%;
+    border: solid 3px #A22522;
 }
 
-/* #product-image {
-    display: ;
-} */
+body {
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #C29979;
+}
+
+#product-image {
+    display: flex;
+    justify-content: space-around;
+
+}
+
+img {
+    width: 25%;
+}
+
+button {
+    background-color: #7b3827;
+    color: #C29979;
+    padding: 16px 20px;
+    border: none;
+    cursor: pointer;
+    width: 250px;
+    opacity: 0.9;
+    font-family: 'Inknut Antiqua', serif;
+}
+
+#button {
+    display: flex;
+    justify-content: space-around;
+
+}
+
+h1 {
+    font-family: 'Inknut Antiqua', serif;
+    color: #A22522;
+    padding-bottom: 100px;
+    padding-top: 50px;
+    font-size: 30px;
+}
